@@ -1,0 +1,42 @@
+{
+  "name": "saucedemo-cypress-framework",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cypress + TypeScript test automation framework (UI + API) with Page Object Model, tags and HTML reports",
+  "license": "MIT",
+  "devDependencies": {
+    "@cypress/grep": "^7.0.0",
+    "@eslint/js": "^10.0.1",
+    "@testing-library/cypress": "^10.1.3",
+    "@types/node": "^26.6.6",
+    "cypress": "^16.3.0",
+    "cypress-multi-reporters": "^2.1.0",
+    "dotenv": "^18.0.10",
+    "eslint": "^10.15.0",
+    "eslint-plugin-cypress": "^7.0.5",
+    "mocha": "^12.0.3",
+    "mochawesome": "^8.1.1",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
+    "prettier": "^3.10.1",
+    "typescript": ">=6.0.0 <6.1.0",
+    "typescript-eslint": "^8.73.0"
+  },
+  "scripts": {
+    "cy:open": "cypress open",
+    "test": "node scripts/run.js",
+    "test:smoke": "node scripts/run.js --env grepTags=@smoke",
+    "test:auth": "node scripts/run.js --spec \"cypress/e2e/auth/**\"",
+    "test:inventory": "node scripts/run.js --spec \"cypress/e2e/inventory/**\"",
+    "test:cart": "node scripts/run.js --spec \"cypress/e2e/cart/**\"",
+    "test:checkout": "node scripts/run.js --spec \"cypress/e2e/checkout/**\"",
+    "test:api": "node scripts/run.js --spec \"cypress/e2e/api/**\"",
+    "report": "node scripts/report.js",
+    "typecheck": "tsc --noEmit -p .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"cypress/**/*.ts\" cypress.config.ts eslint.config.mjs",
+    "format:check": "prettier --check \"cypress/**/*.ts\" cypress.config.ts eslint.config.mjs",
+    "check": "npm run typecheck && npm run lint && npm run format:check"
+  }
+}

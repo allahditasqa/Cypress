@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Local settings
+.env
+.env.*
+!.env.example
+
+# Test output (generated on every run; CI uploads it as an artifact)
+reports/
+mochawesome-report/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
