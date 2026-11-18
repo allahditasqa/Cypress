@@ -21,6 +21,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run cases:check # test case documents, master CSV and test code agree
 
   e2e:
     name: UI + API tests

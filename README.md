@@ -6,7 +6,7 @@
 ![Tests](https://img.shields.io/badge/tests-47%20(UI%20%2B%20API)-brightgreen)
 
 An end-to-end test automation framework built with **Cypress and TypeScript**: Page Object Model, custom commands,
-cached login sessions, tag-based suites, API tests, and a single-file HTML report named with the run date and time.
+cached login sessions, tag-based suites, API tests, documented test cases and module-wise HTML/CSV reports named with the run date and time.
 The same 47 test cases (same IDs, same titles) also exist in my [Playwright framework](https://github.com/allahditasqa/Playwright),
 so the two tools can be compared on identical work.
 
@@ -73,7 +73,9 @@ scripts/run.js · scripts/report.js  run Cypress, then build the dated HTML repo
 │   ├── e2e/                 auth · inventory · cart · checkout · api
 │   ├── fixtures/            products.json
 │   └── support/             commands, constants, pages/, components/, api/
-├── scripts/                 run.js (run + report), report.js (dated HTML report)
+├── docs/                    TEST_STRATEGY, TEST_CASE_STANDARD, test-cases/ (.md + master CSV)
+├── reports/                 committed module-wise reports (index.html, history.json, <module>/)
+├── scripts/                 run.js, report.js (module-wise reports), export-test-cases.js, lib/
 ├── cypress.config.ts
 ├── eslint.config.mjs · .prettierrc.json · tsconfig.json
 └── .github/workflows/ci.yml
@@ -90,7 +92,7 @@ scripts/run.js · scripts/report.js  run Cypress, then build the dated HTML repo
 | API: Posts | 8 | REST: status codes, response shape, filtering, create, update, delete, unknown id |
 | **Total** | **47** | 20 are tagged `@smoke` |
 
-The test case documents (steps and expected results) are in the Playwright repository under `docs/test-cases`.
+The test case documents (steps and expected results) are in `docs/test-cases`.
 
 ## Getting started
 
@@ -110,14 +112,45 @@ npm test
 | Only the High priority cases | `npm run test:smoke` |
 | One module | `npm run test:auth` · `test:inventory` · `test:cart` · `test:checkout` · `test:api` |
 | Rebuild the report from the last run | `npm run report` |
-| All quality gates | `npm run check` |
+| All quality gates (incl. test case traceability) | `npm run check` |
 
-## Reporting
+## Test cases
 
-`npm test` runs Cypress and then writes **one self-contained HTML file** named with the date and time, for example
-`reports/cypress test 17-11-2026_17-14.html`. An old report is never overwritten. Failure screenshots are kept in `cypress/screenshots`.
+The 47 cases are documented in this repository in one standard format: [docs/TEST_CASE_STANDARD.md](docs/TEST_CASE_STANDARD.md), [docs/TEST_STRATEGY.md](docs/TEST_STRATEGY.md).
 
-![Cypress report](docs/images/report.png)
+| Item | Where |
+| --- | --- |
+| Test case documents (5, one per module) | [`docs/test-cases/*.md`](docs/test-cases) |
+| Master CSV (same columns for every module) | `docs/test-cases/*.csv` |
+| Cases | **47**: 20 High, 21 Medium, 6 Low; all automated |
+
+Each case has an ID (`TC_<MODULE>_<NN>`, the same ID is in the `it()` title and in the Playwright repository), module and sub-module, title,
+priority, type, preconditions, test data, numbered steps, expected result, automation status, spec file and the requirement it traces to.
+`npm run cases:check` proves documents and code agree 1:1 (IDs, titles, spec files, master CSV); it runs in CI.
+
+## Reports
+
+`npm test` runs Cypress and then [`scripts/report.js`](scripts/report.js) turns the mochawesome JSON into module-wise, self-contained reports.
+They are **committed**; every run adds new files and an old report is never overwritten:
+
+```
+reports/
+├── index.html                                              history of all runs, newest on top, links to every module report
+├── history.json
+└── auth/
+    ├── Auth test 18-11-2026_14-27-33.html                  HTML report of the module (failure screenshots embedded)
+    └── Auth test cases 18-11-2026_14-27-33.csv             the cases of the module: steps, expected result and the real result of this run
+    (the same for inventory/, cart/, checkout/, api/)
+```
+
+| Goal | Command |
+| --- | --- |
+| Run and generate the reports | `npm test` |
+| Rebuild the reports from the last run | `npm run report` (writes new files) |
+| Open the history | `npm run reports` |
+
+**Latest committed run: 18-11-2026 14:27:33, Electron (47 of 47 passed).** Open [reports/index.html](reports/index.html) or a module report, for example
+[Auth](reports/auth), [Inventory](reports/inventory), [Cart](reports/cart), [Checkout](reports/checkout), [API](reports/api).
 
 ## CI
 
@@ -136,7 +169,7 @@ npm test
 | API tests | `cy.request` | `request` fixture |
 | Parallel runs | per spec file, needs Cypress Cloud or a CI matrix | built in (workers) |
 | Browsers | Chromium family, Firefox | Chromium, Firefox, WebKit |
-| Reports | mochawesome | custom reporter + built-in HTML |
+| Reports | mochawesome JSON -> module-wise HTML + CSV | custom reporter -> same module-wise HTML + CSV |
 
 ## Roadmap
 
